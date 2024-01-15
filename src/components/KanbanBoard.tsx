@@ -1,6 +1,6 @@
 import PlusIcon from "../icons/PlusIcon";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { DndContext } from "@dnd-kit/core";
 import { SortableContext } from "@dnd-kit/sortable";
 
@@ -10,7 +10,7 @@ import ColumnContainer from "./ColumnContainer";
 const KanbanBoard = () => {
   const [columns, setColumns] = useState<Column[]>([]);
 
-  const columnsId = 
+  const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
   // console.log(columns);
 
   return (
