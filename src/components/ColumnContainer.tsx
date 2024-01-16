@@ -6,6 +6,7 @@ import { Column, Id, Task } from "../types";
 
 import TrashIcon from "../icons/TrashIcon";
 import PlusIcon from "../icons/PlusIcon";
+import TaskCard from "./TaskCard";
 
 interface Props {
   column: Column;
@@ -16,7 +17,7 @@ interface Props {
 }
 
 const ColumnContainer = (props: Props) => {
-  const { column, deleteColumn, updateColumn, createTask } = props;
+  const { column, deleteColumn, updateColumn, createTask, tasks } = props;
 
   const [editmode, setEditmode] = useState(false);
 
@@ -99,7 +100,12 @@ const ColumnContainer = (props: Props) => {
       </div>
 
       {/* column task container */}
-      <div className="flex flex-grow">Content</div>
+      <div className="flex flex-col flex-grow gap-4 p-2 overflow-x-hidden overflow-y-auto">
+        {tasks.map((task) => (
+          <TaskCard key={task.id} task={task}/>
+          // <div key={task.id}>{task.content}</div>
+        ))}
+      </div>
       {/* column footer */}
       <button
         onClick={() => {
