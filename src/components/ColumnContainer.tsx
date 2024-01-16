@@ -2,19 +2,23 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useState } from "react";
 
-import { Column, Id } from "../types";
+import { Column, Id, Task } from "../types";
 
 import TrashIcon from "../icons/TrashIcon";
+import PlusIcon from "../icons/PlusIcon";
 
 interface Props {
   column: Column;
   deleteColumn: (id: Id) => void;
+  updateColumn: (id: Id, title: string) => void;
+  createTask: (columnId: Id) => void;
+  tasks: Task[];
 }
 
 const ColumnContainer = (props: Props) => {
-  const { column, deleteColumn } = props;
+  const { column, deleteColumn, updateColumn, createTask } = props;
 
-  const [editmode, setEditmode] = useState(false)
+  const [editmode, setEditmode] = useState(false);
 
   const {
     setNodeRef,
@@ -29,6 +33,7 @@ const ColumnContainer = (props: Props) => {
       type: "Column",
       column,
     },
+    disabled: editmode,
   });
 
   const style = {
@@ -64,7 +69,22 @@ const ColumnContainer = (props: Props) => {
           <div className="flex justify-center items-center bg-column-bg px-2 py-1 text-sm rounded-full">
             0
           </div>
-          {column.title}
+          {!editmode && column.title}
+          {editmode && (
+            <input
+              className="bg-black focus:border-rose-500 border rounded outline-none px-2"
+              value={column.title}
+              onChange={(e) => updateColumn(column.id, e.target.value)}
+              autoFocus
+              onBlur={() => {
+                setEditmode(false);
+              }}
+              onKeyDown={(e) => {
+                if (e.key !== "Enter") return;
+                setEditmode(false);
+              }}
+            />
+          )}
         </div>
 
         <button
@@ -81,7 +101,15 @@ const ColumnContainer = (props: Props) => {
       {/* column task container */}
       <div className="flex flex-grow">Content</div>
       {/* column footer */}
-      <div className="">Footer</div>
+      <button
+        onClick={() => {
+          createTask(column.id);
+        }}
+        className="flex gap-2 items-center border-2 border-column-bg rounded-md p-4 border-x-column-bg hover:bg-main-bg-color hover:text-rose-500 active:bg-black"
+      >
+        <PlusIcon />
+        Add Task
+      </button>
     </div>
   );
 };
