@@ -1,7 +1,10 @@
 import { useSortable } from "@dnd-kit/sortable";
-import TrashIcon from "../icons/TrashIcon";
-import { Column, Id } from "../types";
 import { CSS } from "@dnd-kit/utilities";
+import { useState } from "react";
+
+import { Column, Id } from "../types";
+
+import TrashIcon from "../icons/TrashIcon";
 
 interface Props {
   column: Column;
@@ -11,19 +14,37 @@ interface Props {
 const ColumnContainer = (props: Props) => {
   const { column, deleteColumn } = props;
 
-  const { setNodeRef, attributes, listeners, transform, transition } =
-    useSortable({
-      id: column.id,
-      data: {
-        type: "Column",
-        column,
-      },
-    });
+  const [editmode, setEditmode] = useState(false)
+
+  const {
+    setNodeRef,
+    attributes,
+    listeners,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: column.id,
+    data: {
+      type: "Column",
+      column,
+    },
+  });
 
   const style = {
     transition,
     transform: CSS.Transform.toString(transform),
   };
+
+  if (isDragging) {
+    return (
+      <div
+        ref={setNodeRef}
+        style={style}
+        className="bg-column-bg w-[350px] h-[500px] max-h-[500px] rounded-md flex flex-col opacity-40 border-2 border-rose-500"
+      ></div>
+    );
+  }
 
   return (
     <div
@@ -34,6 +55,9 @@ const ColumnContainer = (props: Props) => {
       <div
         {...attributes}
         {...listeners}
+        onClick={() => {
+          setEditmode(true);
+        }}
         className=" bg-main-bg-color text-md cursor-grab rounded-md rounded-b-none p-3 border-column-bg border-4 flex items-center justify-between"
       >
         <div className="flex gap-2">
